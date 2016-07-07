@@ -1,0 +1,32 @@
+body{
+    height:100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#maze-wrapper{
+
+}
+
+.rectangle {
+    float: left;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid black;
+    font-family: 'Glyphicons Halflings';
+}
+
+.rectangle.wall {
+    background: cornflowerblue;
+}
+
+.rectangle.path {
+    background: palevioletred;
+}
+
+.clearfix{
+    clear: both;
+}
