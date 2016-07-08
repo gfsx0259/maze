@@ -28,6 +28,10 @@ body{
     background: cornflowerblue;
 }
 
+.rectangle.right {
+    background: url('../images/turn_right.png') no-repeat center;
+}
+
 .rectangle.unavailable {
     background: red;
 }

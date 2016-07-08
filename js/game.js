@@ -91,32 +91,32 @@ maze.prototype = {
     generateWall: function(count){
         this.dumpField();
 
-        // for testing
-        //var debug = [
-        //    [3,2],
-        //    [0,3],
-        //    [2,4],
-        //    [4,4],
-        //    [4,2]
-        //];
-        //
-        //for(var i in debug){
-        //    var cell = debug[i];
-        //    this.addClass(cell[0], cell[1], 'wall');
-        //    console.log(this.field);
-        //    this.field[cell[0]][cell[1]] = -2;
-        //}
+         //for testing
+        var debug = [
+            [3,2],
+            [0,3],
+            [2,4],
+            [4,4],
+            [4,2]
+        ];
 
-        while(count){
-            var x = getRandomInt(0, this.config.size - 1);
-            var y = getRandomInt(0, this.config.size - 1);
-            if(this.field[x][y]==-1){
-                this.addClass(x, y, 'wall');
-                this.field[x][y] = -2;
-                count-=1;
-            }
-
+        for(var i in debug){
+            var cell = debug[i];
+            this.addClass(cell[0], cell[1], 'wall');
+            console.log(this.field);
+            this.field[cell[0]][cell[1]] = -2;
         }
+
+        //while(count){
+        //    var x = getRandomInt(0, this.config.size - 1);
+        //    var y = getRandomInt(0, this.config.size - 1);
+        //    if(this.field[x][y]==-1){
+        //        this.addClass(x, y, 'wall');
+        //        this.field[x][y] = -2;
+        //        count-=1;
+        //    }
+        //
+        //}
         this.dumpField();
     },
     dumpField:function(){
@@ -175,8 +175,11 @@ maze.prototype = {
         this.drawStep(++step);
     },
     renderPath:function(step){
+
         var currentCell = this.config.finish;
         this.addClass(currentCell[0],currentCell[1],'path');
+        var trace = [currentCell];
+
         var shifts =  [[0, 1], [1, 0], [0, -1], [-1, 0]];
         while(step >= 0){
             for(var i in shifts){
@@ -184,15 +187,78 @@ maze.prototype = {
                 var verifiableCell = [currentCell[0] + shift[0], currentCell[1] + shift[1]];
                 if(verifiableCell[0] >= 0 && verifiableCell[0] < this.config.size  && verifiableCell[1] >= 0 && verifiableCell[1] < this.config.size){
                     if(this.field[verifiableCell[0]][verifiableCell[1]] == step){
+
+                        console.log(trace[trace.length-1]);
+
                         this.addClass(verifiableCell[0],verifiableCell[1],'path');
                         currentCell = verifiableCell;
+                        trace.push(currentCell);
                         step--;
                         break;
                     }
                 }
             }
         }
+        this.detectTurns(trace.reverse());
+
+    },
+    detectTurns:function(path){
+        for(var i in path){
+            var className = [];
+
+            var currentCell, previousCell, nextCell = null;
+
+            currentCell = path[i];
+            if(parseInt(i)-1>0) {
+                previousCell = path[parseInt(i) - 1];
+            }
+
+            if(parseInt(i)+1<path.length) {
+                nextCell = path[parseInt(i) + 1];
+            }
+
+            if(previousCell && nextCell){
+                if(previousCell[0]<currentCell[0] && nextCell[1]>currentCell[1]){
+                    console.log('turn bottom right');
+                }
+                if(previousCell[0]<currentCell[0] && nextCell[1]<currentCell[1]){
+                    console.log('turn bottom left');
+                }
+                if(previousCell[0]>currentCell[0] && nextCell[1]>currentCell[1]){
+                    console.log('turn top right');
+                }
+                if(previousCell[0]>currentCell[0] && nextCell[1]<currentCell[1]){
+                    console.log('turn top left');
+                }
+            }
+
+            if(parseInt(i)+1<path.length){
+                var nextCell = path[parseInt(i)+1];
+                if(currentCell[0]>nextCell[0]){
+                    console.info('top');
+                }
+                if(currentCell[0]<nextCell[0]){
+                    console.info('bottom');
+                }
+
+                if(currentCell[1]>nextCell[1]){
+                    console.info('left');
+                }
+                if(currentCell[1]<nextCell[1]){
+                    console.info('right');
+                }
+
+            }
+
+
+
+
+
+
+        }
+        console.log(path);
     }
+
 };
 
 $(document).ready(function(){
