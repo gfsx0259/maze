@@ -22,14 +22,12 @@ body{
     background: #fff;
     border: 1px solid black;
     font-family: 'Glyphicons Halflings';
+    background: url('../images/sprite.png') no-repeat center;
+    background-position: -1000px;
 }
 
 .rectangle.wall {
     background: cornflowerblue;
-}
-
-.rectangle.right {
-    background: url('../images/turn_right.png') no-repeat center;
 }
 
 .rectangle.unavailable {
@@ -37,20 +35,67 @@ body{
 }
 
 .rectangle.start {
-    border: 1px solid yellow;
+    background-position: 5px -218px!important;
 }
 
 .rectangle.finish {
-    border: 1px solid orangered;
+    background-position: -45px -218px;
 }
 
+.rectangle.top {
+    background-position: 12px 4px;
+}
+
+.rectangle.bottom {
+    background-position: -21px 4px;
+}
+
+.rectangle.right {
+    background-position: -62px -25px;
+}
+
+.rectangle.left {
+    background-position: -62px 7px;
+}
+
+.rectangle.horizontal_top-right{
+    background-position: -51px -62px;
+}
+
+.rectangle.horizontal_top-left{
+    background-position: 5px -97px;
+}
+
+.rectangle.horizontal_bottom-left{
+    background-position: 7px -173px;
+}
+
+.rectangle.horizontal_bottom-right{
+    background-position: 7px -133px;
+}
+
+.rectangle.vertical_bottom-left{
+    background-position: -52px -175px;
+}
+
+.rectangle.vertical_bottom-right{
+    background-position: -51px -135px;
+}
+
+.rectangle.vertical_top-left{
+    background-position: -51px -94px;
+}
+
+.rectangle.vertical_top-right{
+    background-position: -23px -35px;
+}
 
 .rectangle.active {
     background: green;
 }
 
 .rectangle.path {
-    background: palevioletred;
+    background-color: palevioletred;
 }
 
 .clearfix{
