@@ -6,8 +6,13 @@ body{
     align-items: center;
 }
 
-#maze-wrapper{
+#maze-control-panel{
+    margin:20px auto;
+}
 
+#maze-control-panel div{
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .rectangle {
@@ -21,6 +26,23 @@ body{
 
 .rectangle.wall {
     background: cornflowerblue;
+}
+
+.rectangle.unavailable {
+    background: red;
+}
+
+.rectangle.start {
+    border: 1px solid yellow;
+}
+
+.rectangle.finish {
+    border: 1px solid orangered;
+}
+
+
+.rectangle.active {
+    background: green;
 }
 
 .rectangle.path {

@@ -3,19 +3,69 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-var maze = function(board, size){
-    this.init(board, size);
-    this.drawPath();
+var maze = function(size){
+
+    var fieldElement = $('#maze-field');
+    var coordinates = [];
+    var that = this;
+
+    this.init(fieldElement, size);
+
+    $('#maze-control-restart').click(function() {
+        coordinates = [];
+        that.init(fieldElement, parseInt($('#maze-control-number').val()));
+    });
+
+    fieldElement.on({
+        mouseenter: function(){
+            if($(this).hasClass('wall')){
+                $(this).addClass('unavailable');
+            }else{
+                $(this).addClass('active');
+            }
+        },
+        mouseleave: function(){
+            $(this).removeClass('active unavailable');
+        },
+        click:function(){
+            if($(this).hasClass('wall') || coordinates.length == 2){
+                return false;
+            }
+            //if it's start
+            if(!coordinates.length){
+                coordinates.push(that.parseCoords(this));
+                $(this).addClass('start');
+            }else{
+                //if it's finish
+                coordinates.push(that.parseCoords(this));
+                $(this).addClass('finish');
+                that.setConfig(coordinates);
+                that.drawPath();
+            }
+        }
+    }, '.rectangle');
+
 };
 
 maze.prototype = {
     config: {},
     field: [],
+    setConfig: function(coordinates){
+        this.config.start = coordinates[0];
+        this.config.finish = coordinates[1];
+    },
+    parseCoords: function(element) {
+        var cell_attributes = element.id.split('-');
+        return [parseInt(cell_attributes[1]), parseInt(cell_attributes[2])];
+    },
     init: function (board, size) {
+
         this.config = {
             fieldElement: board,
             size: size
         };
+        this.config.fieldElement.html('');
+        this.field = [];
         // render and create map
         for (var i = 0; i < this.config.size; i++) {
             var row = [];
@@ -31,6 +81,7 @@ maze.prototype = {
                 class: 'clearfix'
             }));
         }
+        console.log(this.field);
         // render wall cells
         this.generateWall(this.getWallCellsCount(this.config.size));
     },
@@ -41,30 +92,31 @@ maze.prototype = {
         this.dumpField();
 
         // for testing
-        var debug = [
-            [3,2],
-            [0,3],
-            [2,4],
-            [4,4],
-            [4,2]
-        ];
-
-        for(var i in debug){
-            var cell = debug[i];
-            this.addClass(cell[0], cell[1], 'wall');
-            this.field[cell[0]][cell[1]] = -2;
-        }
-
-        //while(count){
-        //    var x = getRandomInt(0, this.config.size - 1);
-        //    var y = getRandomInt(0, this.config.size - 1);
-        //    if(this.field[x][y]==-1){
-        //        this.addClass(x, y, 'wall');
-        //        this.field[x][y] = -2;
-        //        count-=1;
-        //    }
+        //var debug = [
+        //    [3,2],
+        //    [0,3],
+        //    [2,4],
+        //    [4,4],
+        //    [4,2]
+        //];
         //
+        //for(var i in debug){
+        //    var cell = debug[i];
+        //    this.addClass(cell[0], cell[1], 'wall');
+        //    console.log(this.field);
+        //    this.field[cell[0]][cell[1]] = -2;
         //}
+
+        while(count){
+            var x = getRandomInt(0, this.config.size - 1);
+            var y = getRandomInt(0, this.config.size - 1);
+            if(this.field[x][y]==-1){
+                this.addClass(x, y, 'wall');
+                this.field[x][y] = -2;
+                count-=1;
+            }
+
+        }
         this.dumpField();
     },
     dumpField:function(){
@@ -74,8 +126,6 @@ maze.prototype = {
         $('#cell-' + x + '-' + y).addClass(className);
     },
     drawPath: function(){
-        this.config.start = [1, 1];
-        this.config.finish = [4, 0];
         this.field[this.config.start[0]][this.config.start[1]] = 0;// Begin from start
         this.drawStep(0);
     },
@@ -111,27 +161,34 @@ maze.prototype = {
             }
 
         this.dumpField();
-        // if path has been found or we can say exactly that it's not possible
-        if(this.field[this.config.finish[0]][this.config.finish[1]] != -1 || !continueDrawing){
+
+        // if we can say exactly that it's not possible
+        if(!continueDrawing){
+            alert('Путь не может быть проложен');
+            return false;
+        }
+        // if path has been found
+        if(this.field[this.config.finish[0]][this.config.finish[1]] != -1){
             this.renderPath(step);
             return false;
         }
-
         this.drawStep(++step);
     },
     renderPath:function(step){
         var currentCell = this.config.finish;
-
+        this.addClass(currentCell[0],currentCell[1],'path');
         var shifts =  [[0, 1], [1, 0], [0, -1], [-1, 0]];
         while(step >= 0){
             for(var i in shifts){
                 var shift = shifts[i];
                 var verifiableCell = [currentCell[0] + shift[0], currentCell[1] + shift[1]];
-                if(this.field[verifiableCell[0]][verifiableCell[1]] == step){
-                    currentCell = verifiableCell;
-                    this.addClass(currentCell[0],currentCell[1],'path');
-                    step--;
-                    break;
+                if(verifiableCell[0] >= 0 && verifiableCell[0] < this.config.size  && verifiableCell[1] >= 0 && verifiableCell[1] < this.config.size){
+                    if(this.field[verifiableCell[0]][verifiableCell[1]] == step){
+                        this.addClass(verifiableCell[0],verifiableCell[1],'path');
+                        currentCell = verifiableCell;
+                        step--;
+                        break;
+                    }
                 }
             }
         }
@@ -139,5 +196,5 @@ maze.prototype = {
 };
 
 $(document).ready(function(){
-    new maze($('#maze-field'), 5);
+   new maze(parseInt($('#maze-control-number').val()));
 });
